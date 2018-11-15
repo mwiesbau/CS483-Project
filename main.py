@@ -78,19 +78,19 @@ class FileOfRecords():
         Uses the RADIX sorting from section 4 in the paper
         '''
 
+        number_of_iterations = 0
         # START WITH THE LAST FIELD AND ITERATE TO THE FIRST FIELD
         for i in range(self.num_fields-1, -1, -1):
             ordered_array = [] # TEMPORARY ARRAY LOCATION
             sorted_dict = {}   # LIST TO STORE SORTED RESULTS
             # ITERATE OVER ALL RECORDS
             for record in self.records:
+                number_of_iterations += 1
                 number = record[i]
                 # IF THERE IS NO DICT KEY WITH THAT NUMBER CREATE A NEW ENTRY
                 if not number in sorted_dict.keys():
                     sorted_dict[number] = []
                 sorted_dict[number].append(record)
-
-
 
             # CONVERT THE LINKED LIST TO ARRAY
             ordered_keys = sorted(sorted_dict.keys())
@@ -104,14 +104,17 @@ class FileOfRecords():
             # print(sorted_dict)
             #for item in ordered_array:
             #    print(item)
-
+        return number_of_iterations
 
 if __name__ == "__main__":
 
 
-    file_of_records = FileOfRecords(num_records=25, num_fields=4, start_int=2, end_int=10)
+    file_of_records = FileOfRecords(num_records=10000, num_fields=20, start_int=2, end_int=10)
 
 
-    file_of_records.algorithm_c()
+    number_of_ops = file_of_records.algorithm_c()
+    print("Statistics for Algorithm C")
+    print("="*50)
+    print("Operations:     {}".format(number_of_ops))
     print("Before Sorting: {}".format(file_of_records.initial_score))
-    print("After Sorting: {}".format(file_of_records.get_score()))
+    print("After Sorting:  {}".format(file_of_records.get_score()))
