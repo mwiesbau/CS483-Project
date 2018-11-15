@@ -6,12 +6,15 @@ class FileOfRecords():
     num_fields = 0
     records = []
     initial_score = {}
-
+    start_int = 0
+    end_ind = 0
 
     def __init__(self, num_records, num_fields, start_int, end_int):
         self.start_int = start_int
         self.end_int = end_int
         self.num_fields = num_fields
+        self.start_int = start_int
+        self.end_int = end_int
 
         # GENERATE RECORD DATA
         for j in range(0, num_records):
@@ -54,7 +57,7 @@ class FileOfRecords():
 
     def algorithm_a(self):
         '''
-        Uses grayorder(X,Y)
+        Uses grayorder(X,Y) from section 3 in the Paper
         :return: number of loop iterations
         '''
 
@@ -70,9 +73,45 @@ class FileOfRecords():
         return None
 
 
+    def algorithm_c(self):
+        '''
+        Uses the RADIX sorting from section 4 in the paper
+        '''
+
+        # START WITH THE LAST FIELD AND ITERATE TO THE FIRST FIELD
+        for i in range(self.num_fields-1, -1, -1):
+            ordered_array = [] # TEMPORARY ARRAY LOCATION
+            sorted_dict = {}   # LIST TO STORE SORTED RESULTS
+            # ITERATE OVER ALL RECORDS
+            for record in self.records:
+                number = record[i]
+                # IF THERE IS NO DICT KEY WITH THAT NUMBER CREATE A NEW ENTRY
+                if not number in sorted_dict.keys():
+                    sorted_dict[number] = []
+                sorted_dict[number].append(record)
+
+
+
+            # CONVERT THE LINKED LIST TO ARRAY
+            ordered_keys = sorted(sorted_dict.keys())
+            for key in ordered_keys:
+                ordered_array += sorted_dict[key]
+
+            # UPDATE RECORDS
+            self.records = ordered_array
+
+            # DBUGING ONLY
+            # print(sorted_dict)
+            #for item in ordered_array:
+            #    print(item)
+
+
 if __name__ == "__main__":
 
 
-    file_of_records = FileOfRecords(num_records=5, num_fields=4, start_int=2, end_int=10)
-    print(file_of_records)
-    print(file_of_records.initial_score)
+    file_of_records = FileOfRecords(num_records=25, num_fields=4, start_int=2, end_int=10)
+
+
+    file_of_records.algorithm_c()
+    print("Before Sorting: {}".format(file_of_records.initial_score))
+    print("After Sorting: {}".format(file_of_records.get_score()))
