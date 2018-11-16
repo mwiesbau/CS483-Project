@@ -4,7 +4,6 @@ import random
 def radix_sort(records, num_fields):
     number_of_iterations = 0
     # START WITH THE LAST FIELD AND ITERATE TO THE FIRST FIELD
-
     for i in range(num_fields - 1, -1, -1):
         ordered_array = []  # TEMPORARY ARRAY LOCATION
         sorted_dict = {}  # LIST TO STORE SORTED RESULTS
@@ -60,6 +59,37 @@ def test_radix_sort():
     return is_different
 
 
+
+def gray_order_sort(records, num_fields):
+    number_of_iterations = 0
+    return records, number_of_iterations
+
+def test_gray_order_sort():
+    num_fields = 3
+    # GENERATE GREY CODE AND SHUFFLE
+    grey_code = generate_grey_code(fields=num_fields, start=1, end=2)
+    randomized_grey_code = grey_code.copy()
+    random.seed(11)
+    random.shuffle(randomized_grey_code)
+
+    # SORT
+    sorted_grey, iterations = gray_order_sort(randomized_grey_code, num_fields=num_fields)
+
+    is_different = False
+    for grey, sorted in zip(grey_code, sorted_grey):
+        if grey != sorted:
+            is_different == True
+
+        # FOR DEBUGGING
+        print("{} | {} | {}".format(grey, sorted, grey == sorted))
+    return is_different
+
+
+
+
+
+
+
 def run_all_tests():
 
     #### ALGORITHM C TEST
@@ -67,9 +97,9 @@ def run_all_tests():
     print("="*40)
     print("Radix Sort is working as expected: {}".format(not test_radix_sort()))
 
-'''
+
 if __name__ == "__main__":
     
     #run_all_tests()
-'''
+    test_gray_order_sort()
 

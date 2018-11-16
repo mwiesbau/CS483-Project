@@ -9,18 +9,15 @@ class FileOfRecords():
     start_int = 0
     end_ind = 0
 
-    def __init__(self, num_records, num_fields, start_int, end_int):
-        self.start_int = start_int
-        self.end_int = end_int
+    def __init__(self, num_records, num_fields):
         self.num_fields = num_fields
-        self.start_int = start_int
-        self.end_int = end_int
 
         # GENERATE RECORD DATA
         for j in range(0, num_records):
+                Ni = random.randint(2,10)
                 self.records.append([])
                 for k in range(0, num_fields):
-                    self.records[j].append(random.randint(start_int, end_int-1))
+                    self.records[j].append(random.randint(1, Ni-1))
 
         # CALCULATE INITIAL SCORES
         self.initial_score = self.get_score()
@@ -81,15 +78,26 @@ class FileOfRecords():
         self.records = sorted_records
         return number_of_iterations
 
-if __name__ == "__main__":
 
+def run_algorithm_a(file_of_records):
+    return None
 
-    file_of_records = FileOfRecords(num_records=10000, num_fields=20, start_int=2, end_int=10)
-
-
+def run_algorithm_c(file_of_records):
     number_of_ops = file_of_records.algorithm_c()
     print("Statistics for Algorithm C")
-    print("="*50)
+    print("=" * 50)
     print("Operations:     {}".format(number_of_ops))
     print("Before Sorting: {}".format(file_of_records.initial_score))
     print("After Sorting:  {}".format(file_of_records.get_score()))
+
+
+
+
+
+if __name__ == "__main__":
+
+    file_of_records = FileOfRecords(num_records=10000, num_fields=20)
+    #run_algorithm_c(file_of_records)
+    run_algorithm_a(file_of_records)
+
+
