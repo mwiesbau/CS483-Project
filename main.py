@@ -1,7 +1,7 @@
 
 import random
 from generator import generate_grey_code
-
+from algorithms import radix_sort
 class FileOfRecords():
     num_fields = 0
     records = []
@@ -77,33 +77,8 @@ class FileOfRecords():
         '''
         Uses the RADIX sorting from section 4 in the paper
         '''
-
-        number_of_iterations = 0
-        # START WITH THE LAST FIELD AND ITERATE TO THE FIRST FIELD
-        for i in range(self.num_fields-1, -1, -1):
-            ordered_array = [] # TEMPORARY ARRAY LOCATION
-            sorted_dict = {}   # LIST TO STORE SORTED RESULTS
-            # ITERATE OVER ALL RECORDS
-            for record in self.records:
-                number_of_iterations += 1
-                number = record[i]
-                # IF THERE IS NO DICT KEY WITH THAT NUMBER CREATE A NEW ENTRY
-                if not number in sorted_dict.keys():
-                    sorted_dict[number] = []
-                sorted_dict[number].append(record)
-
-            # CONVERT THE LINKED LIST TO ARRAY
-            ordered_keys = sorted(sorted_dict.keys())
-            for key in ordered_keys:
-                ordered_array += sorted_dict[key]
-
-            # UPDATE RECORDS
-            self.records = ordered_array
-
-            # DBUGING ONLY
-            # print(sorted_dict)
-            #for item in ordered_array:
-            #    print(item)
+        sorted_records, number_of_iterations = radix_sort(self.records, num_fields=self.num_fields)
+        self.records = sorted_records
         return number_of_iterations
 
 if __name__ == "__main__":
