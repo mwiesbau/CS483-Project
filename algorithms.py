@@ -40,9 +40,9 @@ def radix_sort(records, num_fields):
 
 
 def test_radix_sort():
-    num_fields = 4
+    num_fields = 3
     # GENERATE GREY CODE AND SHUFFLE
-    grey_code = generate_grey_code(fields=num_fields, start=1, end=3)
+    grey_code = generate_grey_code(fields=num_fields, start=1, end=2)
     randomized_grey_code = grey_code.copy()
     random.shuffle(randomized_grey_code)
 
@@ -55,7 +55,7 @@ def test_radix_sort():
             is_different == True
 
         # FOR DEBUGGING
-        #print("{} | {} | {}".format(grey, sorted, grey == sorted))
+        print("{} | {} | {}".format(grey, sorted, grey == sorted))
     return is_different
 
 
@@ -95,11 +95,12 @@ def run_all_tests():
     #### ALGORITHM C TEST
     print("Testing the implemented Algorithms")
     print("="*40)
+    print("Testing Radix Sort")
     print("Radix Sort is working as expected: {}".format(not test_radix_sort()))
-
+    print("-" * 40)
 
 if __name__ == "__main__":
     
-    #run_all_tests()
-    test_gray_order_sort()
+    run_all_tests()
+    #test_gray_order_sort()
 
