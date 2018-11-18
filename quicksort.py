@@ -1,9 +1,15 @@
-from generator import generate_grey_code
 
-unsorted = [5, 3, 1, 9, 8, 2, 4, 7]
+#unsorted = [5, 3, 1, 9, 8, 2, 4, 7]
+#unsorted = [
+#            [1,1,0],
+#            [2,2,0],
+#            [0,0,1],
+#            [1,1,1],
+#            [0,2,1],
+#]
 
 
-def partition(arr, left, right):
+def partition(arr, left, right, is_less_than):
     '''
     Lomuto Partition scheme
     :param arr:
@@ -14,9 +20,12 @@ def partition(arr, left, right):
 
     pivot = arr[right]
     i = left
-
+    iterations = 0
     for j in range(left, right):
-        if arr[j] <= pivot:
+
+        iterations += 1
+        #print("{} < {} {}".format(arr[j], pivot, grayorder(arr[j], pivot)))
+        if is_less_than(arr[j], pivot):
             temp = arr[j]
             arr[j] = arr[i]
             arr[i] = temp
@@ -29,47 +38,34 @@ def partition(arr, left, right):
     # DEBUG ONLY
     #print(arr)
     #print("Pivot: {} value: {}".format(i, arr[i]))
-    return i
+    return i, iterations
 
 
-def quick_sort(arr, left, right):
+def quick_sort(arr, left, right, is_less_than):
+    '''
+    Quick  expects the a comparator function
+    :param arr:
+    :param left:
+    :param right:
+    :param is_less_than: comparator function taking two elements and returning a boolean
+    :return:
+    '''
 
+    total_iterations = 0
     if left < right:
-        part = partition(arr, left, right)
-        quick_sort(arr, left, part-1)
-        quick_sort(arr, part+1, right)
+        part, ops_count = partition(arr, left, right, is_less_than)
+        total_iterations += ops_count
+        quick_sort(arr, left, part-1, is_less_than)
+        quick_sort(arr, part+1, right, is_less_than)
 
-    return arr
-
-
-def grayorder(X, Y):
-
-    d=-1
-    # DETERMINE THE LEAST INTEGER d where X[d+1] != Y[d+1]
-    for i in range(0, len(X)-1):
-        if X[i+1] != Y[i+1]:
-            d = i
+    return arr, total_iterations
 
 
-    # CALCULATE TOTAL D
-    total_d = 0
-    if d <= 0:
-        total_d = 0
-    else:
-        for i in range(0, d+1):
-            total_d += X[i]
-    print("d: {} total_d: {}".format(d, total_d))
 
-    if total_d % 2 == 0:
-        return (X[d+1] < Y[d+1])
-    else:
-        return (Y[d+1] < X[d+1])
-
+'''
 if __name__ == "__main__":
-    #quick_sort(array=unsorted, 0, len(unsorted)-1)
-    #print(quick_sort(unsorted, 0, 7))
 
-    grey_code = generate_grey_code(3, 1, 2)
-    print(grey_code)
-    for i in range(0, len(grey_code)-1):
-        print("{} < {} = {}".format(i, i+1,grayorder(grey_code[i], grey_code[i+1])))
+    #print(quick_sort(unsorted, 0, 4))
+'''
+
+

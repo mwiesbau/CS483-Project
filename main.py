@@ -1,7 +1,7 @@
-
+import numpy as np
 import random
-from generator import generate_grey_code
-from algorithms import radix_sort
+
+from algorithms import radix_sort, gray_order_sort
 class FileOfRecords():
     num_fields = 0
     records = []
@@ -11,22 +11,22 @@ class FileOfRecords():
 
     def __init__(self, num_records, num_fields):
         self.num_fields = num_fields
-
+        random.seed(3)
         # GENERATE RECORD DATA
         for j in range(0, num_records):
                 Ni = random.randint(2,10)
                 self.records.append([])
                 for k in range(0, num_fields):
-                    self.records[j].append(random.randint(1, Ni-1))
+                    self.records[j].append(random.randint(1, Ni))
 
         # CALCULATE INITIAL SCORES
         self.initial_score = self.get_score()
 
-
     def __str__(self):
         result = ""
-        for item in self.records:
-            result += "{}\n".format(item)
+
+        for record in self.records:
+            result += "{}\n".format(record)
         return result
 
 
@@ -51,6 +51,8 @@ class FileOfRecords():
                 #    print("Row: {} Col: {} is the same as predecessor.".format(j, i))
         return {"binary_score": binary_counter, "full_score": full_score}
 
+    def write_to_file(self):
+        np.save("output.npy", self.records)
 
     def algorithm_a(self):
         '''
@@ -58,7 +60,9 @@ class FileOfRecords():
         :return: number of loop iterations
         '''
 
-        return None
+        sorted_records, number_of_iterations = gray_order_sort(self.records)
+        self.records = sorted_records
+        return number_of_iterations
 
     def algorithm_b(self):
         '''
@@ -80,7 +84,13 @@ class FileOfRecords():
 
 
 def run_algorithm_a(file_of_records):
-    return None
+    number_of_ops = file_of_records.algorithm_a()
+    print("Statistics for Algorithm A")
+    print("=" * 50)
+    print("Operations:     {}".format(number_of_ops))
+    print("Before Sorting: {}".format(file_of_records.initial_score))
+    print("After Sorting:  {}".format(file_of_records.get_score()))
+    print("\n")
 
 def run_algorithm_c(file_of_records):
     number_of_ops = file_of_records.algorithm_c()
@@ -97,7 +107,8 @@ def run_algorithm_c(file_of_records):
 if __name__ == "__main__":
 
     file_of_records = FileOfRecords(num_records=10000, num_fields=20)
-    #run_algorithm_c(file_of_records)
     run_algorithm_a(file_of_records)
+    #run_algorithm_c(file_of_records)
+    #run_algorithm_a(file_of_records)
 
 
