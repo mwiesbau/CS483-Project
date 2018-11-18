@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from algorithms import radix_sort, gray_order_sort
+from algorithms import radix_sort, gray_order_sort, rank_sort
 class FileOfRecords():
     num_fields = 0
     records = []
@@ -71,7 +71,9 @@ class FileOfRecords():
         :return:
         '''
 
-        return None
+        sorted_records, number_of_iterations = rank_sort(self.records, 10)
+        self.records = sorted_records
+        return number_of_iterations
 
 
     def algorithm_c(self):
@@ -92,6 +94,17 @@ def run_algorithm_a(file_of_records):
     print("After Sorting:  {}".format(file_of_records.get_score()))
     print("\n")
 
+
+def run_algorithm_b(file_of_records):
+    number_of_ops = file_of_records.algorithm_b()
+    print("Statistics for Algorithm B")
+    print("=" * 50)
+    print("Operations:     {}".format(number_of_ops))
+    print("Before Sorting: {}".format(file_of_records.initial_score))
+    print("After Sorting:  {}".format(file_of_records.get_score()))
+    print("\n")
+
+
 def run_algorithm_c(file_of_records):
     number_of_ops = file_of_records.algorithm_c()
     print("Statistics for Algorithm C")
@@ -106,9 +119,14 @@ def run_algorithm_c(file_of_records):
 
 if __name__ == "__main__":
 
-    file_of_records = FileOfRecords(num_records=10000, num_fields=20)
-    run_algorithm_a(file_of_records)
-    #run_algorithm_c(file_of_records)
-    #run_algorithm_a(file_of_records)
+    file_of_records_a = FileOfRecords(num_records=10000, num_fields=20)
+    run_algorithm_a(file_of_records_a)
+
+    #file_of_records_b = FileOfRecords(num_records=10000, num_fields=20)
+    #run_algorithm_b(file_of_records_b)
+
+    #file_of_records_c = FileOfRecords(num_records=10000, num_fields=20)
+    #run_algorithm_c(file_of_records_c)
+
 
 

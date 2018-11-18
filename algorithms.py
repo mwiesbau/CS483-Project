@@ -127,36 +127,82 @@ def test_gray_order_sort():
     return is_different
 
 
-def rank_sort(records, num_fields, N):
+def gray_rank(record, N):
+    '''
+    Computes the rank of a Grey Order Record
+    :param record:
+    :return:
+    '''
 
+    i = record[0]
+
+    for j in range(1, len(record)):
+        if i % 2 == 0:
+            i_2 = record[j]
+        else:
+            i_2 = N - 1 - record[j]
+
+        i = i * N + i_2
+
+    return i
+
+
+def test_gray_rank():
+    num_fields = 3
+    # GENERATE GREY CODE AND SHUFFLE
+    grey_code = generate_grey_code(fields=num_fields, start=0, end=2)
+
+    is_different = False
+    for i in range(0, len(grey_code)):
+        rank = gray_rank(grey_code[i], 3)
+
+        if rank == i:
+            is_match = True
+        else:
+            is_match = False
+            is_different = True
+        # DEBUG ONLY
+        #print("{} -> {} | {}".format(grey_code[i], rank, is_match))
+    return is_different
+
+
+def rank_sort(records, N):
+
+    # COMPUTE AND APPEND THE RANK
     for record in records:
-        # ALGORITHM FROM DANA RICHARDS PAPER
-        i = record[0]
+        rank = gray_rank(record, N)
+        record.append(rank)
 
-        for j in range(1, num_fields):
-            if i % 2 == 0:
-                i_2 = record[j]
-            else:
-                i_2 = N-1-record[j]
+    # COMPARATOR FUNTION FOR QUICKSORT
+    def is_less_than(record1, record2):
+        if record1[-1] < record2[-1]:   # COMPARE RANKS
+            return True
+        else:
+            return False
 
-            i = i*N+i_2
+    # QUICKSORT ON THE RECORDS
+    records, iterations = quick_sort(records, 0, len(records)-1, is_less_than)
+    return records, iterations
 
-        record.append(i)  # APPEND THE RANK TO THE RECORD
-    return records
 
 def test_rank_sort():
     num_fields = 3
     # GENERATE GREY CODE AND SHUFFLE
-    grey_code = generate_grey_code(fields=num_fields, start=1, end=2)
+    grey_code = generate_grey_code(fields=num_fields, start=0, end=2)
     randomized_grey_code = grey_code.copy()
     random.shuffle(randomized_grey_code)
-    print(rank_sort(grey_code, num_fields, 2))
 
-
-
+    ranked, iterations = rank_sort(randomized_grey_code, 3)
+    is_different = False
+    for grey, sorted in zip(grey_code, ranked):
+        if grey[-1] != sorted[-1]:
+            is_different = True
+            #print("{} {} -> {}".format(grey, sorted[:-1], sorted[-1]))
+    return is_different
 
 
 def run_all_tests():
+
 
     #### ALGORITHM C TEST
     print("Testing the implemented Algorithms")
@@ -165,17 +211,27 @@ def run_all_tests():
     print("Radix Sort is working as expected: {}".format(not test_radix_sort()))
     print("-" * 40)
 
+    # ALGORITHM A TESTS
     print("Testing Gray Order")
     print("Gray Order is working as expected: {}".format(not test_grayorder()))
     print("-" * 40)
 
     print("Testing Gray Order Sort")
-    print("Gray Order is working as expected: {}".format(not test_gray_order_sort()))
+    print("Gray Order Sort is working as expected: {}".format(not test_gray_order_sort()))
+    print("-" * 40)
+
+    # ALGORITHM B TESTS
+    print("Testing Gray Rank")
+    print("Gray Order Rank is working as expected: {}".format(not test_gray_rank()))
+    print("-" * 40)
+
+    print("Testing Gray Rank Sort")
+    print("Gray Order Rank Sorting is working as expected: {}".format(not test_rank_sort()))
     print("-" * 40)
 
 if __name__ == "__main__":
     
     run_all_tests()
     #test_gray_order_sort()
-    #test_rank_sort()
+
 
