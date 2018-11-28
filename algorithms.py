@@ -2,7 +2,7 @@ from generator import generate_grey_code
 import random
 from quicksort import quick_sort
 
-def radix_sort(records, num_fields):
+def radix_sort(records):
     number_of_iterations = 0
 
     # START WITH THE LAST FIELD AND ITERATE TO THE FIRST FIELD
@@ -23,7 +23,6 @@ def radix_sort(records, num_fields):
 
         # CONVERT THE LINKED LIST TO ARRAY
         ordered_keys = sorted(sorted_dict.keys())
-        #even_odd_counter = 0
         for key in ordered_keys:
             # CHECK IF LIST IS EVEN OR ODD TO ORDER IN GRAY ORDER AND NOT LEXICOGRAPHIC
             #if even_odd_counter % 2 == 0:
@@ -31,7 +30,6 @@ def radix_sort(records, num_fields):
                 ordered_array += sorted_dict[key]
             else:
                 ordered_array += reversed(sorted_dict[key])
-            #even_odd_counter += 1
 
         # UPDATE RECORDS
         records = ordered_array
@@ -51,7 +49,7 @@ def test_radix_sort():
     random.shuffle(randomized_grey_code)
 
     # SORT
-    sorted_grey, iterations = radix_sort(randomized_grey_code, num_fields=num_fields)
+    sorted_grey, iterations = radix_sort(randomized_grey_code)
 
     is_different = False
     for grey, sorted in zip(grey_code, sorted_grey):
@@ -59,7 +57,7 @@ def test_radix_sort():
             is_different == True
 
         # FOR DEBUGGING
-        print("{} | {} | {}".format(grey, sorted, grey == sorted))
+        #print("{} | {} | {}".format(grey, sorted, grey == sorted))
     return is_different
 
 
@@ -172,7 +170,6 @@ def test_gray_rank():
 
 
 def rank_sort(records, N):
-
     # COMPUTE AND APPEND THE RANK
     for record in records:
         rank = gray_rank(record, N)
@@ -191,7 +188,6 @@ def rank_sort(records, N):
 
 
 def test_rank_sort():
-
     num_fields = 3
     # GENERATE GREY CODE AND SHUFFLE
     grey_code = generate_grey_code(fields=num_fields, start=0, end=2)
@@ -209,30 +205,25 @@ def test_rank_sort():
 
 def run_all_tests():
     print("Testing the implemented Algorithms")
-    print("=" * 40)
+    print("=" * 70)
 
-    #### ALGORITHM C TEST
-    print("Testing Radix Sort")
-    print("Radix Sort is working as expected: {}".format(not test_radix_sort()))
-    print("-" * 40)
-
-
-    '''    
     # ALGORITHM A TESTS
-    print("Testing Gray Order")
+    print("Algorithm A - Testing Gray Order")
     print("Gray Order is working as expected: {}".format(not test_grayorder()))
-    print("-" * 40)
+    print("-" * 70)
     
     # ALGORITHM B TESTS
-    print("Testing Gray Rank")
+    print("Algorithm B - Testing Gray Rank")
     print("Gray Order Rank is working as expected: {}".format(not test_gray_rank()))
-    print("-" * 40)
-    
-    #### ALGORITHM C TEST        
-    print("Testing Radix Sort")
-    print("Radix Sort is working as expected: {}".format(not test_radix_sort()))
-    print("-" * 40)
+    print("-" * 70)
 
+    #### ALGORITHM C TEST
+    print("Algorithm C - Testing Radix Sort")
+    print("Radix Sort is working as expected: {}".format(not test_radix_sort()))
+    print("-" * 70)
+
+
+    '''
     ## HELPER METHODS TESTS        
     print("Testing Gray Order Sort")
     print("Gray Order Sort is working as expected: {}".format(not test_gray_order_sort()))
@@ -245,10 +236,3 @@ def run_all_tests():
 if __name__ == "__main__":
     
     run_all_tests()
-    #test_gray_order_sort()
-
-    X = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 1]
-    Y = [1, 10, 9, 8, 8, 10, 7, 1, 2, 5, 8, 1, 2, 1, 8, 8, 7, 2, 1, 9]
-    print("X: {}".format(X))
-    print("Y: {}".format(Y))
-    print("X < Y = {}".format(grayorder(X, Y)))

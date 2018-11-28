@@ -82,7 +82,7 @@ class FileOfRecords():
         '''
         Uses the RADIX sorting from section 4 in the paper
         '''
-        sorted_records, number_of_iterations = radix_sort(self.records, num_fields=self.num_fields)
+        sorted_records, number_of_iterations = radix_sort(self.records)
         self.records = sorted_records
         return number_of_iterations
 
@@ -146,8 +146,10 @@ if __name__ == "__main__":
 
 
     for param in params:
-        print("\nRunning Algorithm: {}".format(param))
-        counter = 0
+        print("\n")
+        print("="*70)
+        print("Algorithm - {}".format(param.upper()))
+        counter = 1
         total_counter = 0
         before_binary = 0
         before_full = 0
@@ -155,10 +157,9 @@ if __name__ == "__main__":
         after_full = 0
         total_operations = 0
 
-
-
+        # MAKE COPY THE INSTANCE TO ENSURE THE SAME DATA IS BEING COMPARED
         files = copy.deepcopy(all_files)
-        print("\tRunning {:02d}/10 samples with {} files.".format(counter, number_of_files))
+        print("\tRunning {:02d}/10 samples with {} file/s each.".format(counter, number_of_files))
 
         # ITERATE OVER THE 10 FILES
         for file_of_records in files.files:
@@ -185,6 +186,7 @@ if __name__ == "__main__":
             after_binary += after_score["binary_score"]
             after_full += after_score["full_score"]
 
+            # DEBUG SECTION SHOWGIN FIRST AND LAST ENTRIES IN SORTED ORDER
             print("-" * 70)
             print("\tFIRST 5 RECORDS IN FILE")
             print("-" * 70)
