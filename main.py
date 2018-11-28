@@ -1,17 +1,13 @@
 import numpy as np
 import random
+import copy
 from algorithms import radix_sort, gray_order_sort, rank_sort
 
 class FileOfRecords():
-    #num_fields = 0
-    #records = []
-    #initial_score = {}
-    #start_int = 0
-    #end_ind = 0
 
     def __init__(self, num_records, num_fields):
         self.num_fields = num_fields
-        #random.seed(3)
+
         # GENERATE RECORD DATA
         self.records = []
         for j in range(0, num_records):
@@ -21,7 +17,7 @@ class FileOfRecords():
                     self.records[j].append(random.randint(1, Ni))
 
         # CALCULATE INITIAL SCORES
-        #self.initial_score = self.get_score()
+        self.initial_score = self.get_score()
 
     def __str__(self):
         result = ""
@@ -60,7 +56,6 @@ class FileOfRecords():
         Uses grayorder(X,Y) from section 3 in the Paper
         :return: number of loop iterations
         '''
-
         sorted_records, number_of_iterations = gray_order_sort(self.records)
         self.records = sorted_records
         return number_of_iterations
@@ -72,7 +67,13 @@ class FileOfRecords():
         :return:
         '''
 
-        sorted_records, number_of_iterations = rank_sort(self.records, 10)
+        sorted_records, number_of_iterations = rank_sort(self.records, 11)
+
+        # REMOVE RANK FROM RECORD
+        for i in range(0, len(sorted_records)):
+            sorted_records[i] = sorted_records[i][:-1]
+
+
         self.records = sorted_records
         return number_of_iterations
 
@@ -85,6 +86,13 @@ class FileOfRecords():
         self.records = sorted_records
         return number_of_iterations
 
+    def print_first_x_records(self, x):
+        for i in range(0, x):
+            print("\t"+str(self.records[i]))
+
+    def print_last_x_records(self, x):
+        for i in range(len(self.records)-x, len(self.records)):
+            print("\t"+str(self.records[i]))
 
 def run_algorithm_a(file_of_records):
     number_of_ops = file_of_records.algorithm_a()
@@ -117,23 +125,25 @@ def run_algorithm_c(file_of_records):
 
 
 class Files():
-
-
-
+    '''
+    The class containing 10 files with 10k records each, each record having 20 fields
+    '''
     def __init__(self, num_files=10):
-        self.records = []
+        self.files = []
         for i in range(0, num_files):
-            self.records.append(FileOfRecords(num_records=10000, num_fields=20))
-
-
+            self.files.append(FileOfRecords(num_records=10000, num_fields=20))
 
 
 
 if __name__ == "__main__":
+    number_of_files = 1
 
-    #file_of_records_a = FileOfRecords(num_records=10000, num_fields=20)
+    #INITIALIZE THE ALL FILES
+    all_files = Files(num_files=number_of_files)
 
-    params = ['a', 'b', 'c']    # LIST OF ALGORITHMS TO RUN
+    # LIST OF ALGORITHMS TO RUN
+    params = ['a', 'b', 'c']
+
 
     for param in params:
         print("\nRunning Algorithm: {}".format(param))
@@ -144,31 +154,47 @@ if __name__ == "__main__":
         after_binary = 0
         after_full = 0
         total_operations = 0
-        for i in range(0,10):
-            counter += 1
 
-            file_records = Files()
-            print("\tRunning {:02d}/10 samples with 10 files.".format(counter))
 
-            for file_of_records in file_records.records:
-                total_counter += 1
-                before_score = file_of_records.get_score()
-                #print("{} Scores: {}".format(counter, before_score))
-                before_binary += before_score["binary_score"]
-                before_full += before_score["full_score"]
-                if param == 'a':
-                    operations = file_of_records.algorithm_a()
-                    total_operations += operations
-                if param == 'b':
-                    operations = file_of_records.algorithm_b()
-                    total_operations += operations
-                if param == 'c':
-                    operations = file_of_records.algorithm_c()
-                    total_operations += operations
-                after_score = file_of_records.get_score()
-                after_binary += after_score["binary_score"]
-                after_full += after_score["full_score"]
 
+        files = copy.deepcopy(all_files)
+        print("\tRunning {:02d}/10 samples with {} files.".format(counter, number_of_files))
+
+        # ITERATE OVER THE 10 FILES
+        for file_of_records in files.files:
+            total_counter += 1
+
+            # STORE SCORES BEFORE THE ALGORITHM IS RUN
+            before_score = file_of_records.get_score()
+            before_binary += before_score["binary_score"]
+            before_full += before_score["full_score"]
+
+            # DECIDE WHICH ALGORITHM TO RUN
+            if param == 'a':
+                operations = file_of_records.algorithm_a()
+                total_operations += operations
+            if param == 'b':
+                operations = file_of_records.algorithm_b()
+                total_operations += operations
+            if param == 'c':
+                operations = file_of_records.algorithm_c()
+                total_operations += operations
+
+            # STORE SCORES AFTER THE ALGORITHM IS RUN
+            after_score = file_of_records.get_score()
+            after_binary += after_score["binary_score"]
+            after_full += after_score["full_score"]
+
+            print("-" * 70)
+            print("\tFIRST 5 RECORDS IN FILE")
+            print("-" * 70)
+            file_of_records.print_first_x_records(5)
+            print("-" * 70)
+            print("\tLAST 5 RECORDS IN FILE")
+            print("-" * 70)
+            file_of_records.print_last_x_records(5)
+
+        # PRINT STATS
         print("-"*70)
         print("Before Averages total: {} iterations: Binary: {:.1f}, Full: {:.1f}".format(total_counter, before_binary/total_counter, before_full/total_counter))
         print("After Averages total:  {} iterations: Binary: {:.1f}, Full: {:.1f}".format(total_counter, after_binary /total_counter, after_full /total_counter))

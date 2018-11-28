@@ -1,13 +1,4 @@
 
-#unsorted = [5, 3, 1, 9, 8, 2, 4, 7]
-#unsorted = [
-#            [1,1,0],
-#            [2,2,0],
-#            [0,0,1],
-#            [1,1,1],
-#            [0,2,1],
-#]
-
 
 def partition(arr, left, right, is_less_than):
     '''
@@ -54,18 +45,25 @@ def quick_sort(arr, left, right, is_less_than):
     total_iterations = 0
     if left < right:
         part, ops_count = partition(arr, left, right, is_less_than)
+        _, iter1 = quick_sort(arr, left, part-1, is_less_than)
+        _, iter2 = quick_sort(arr, part+1, right, is_less_than)
         total_iterations += ops_count
-        quick_sort(arr, left, part-1, is_less_than)
-        quick_sort(arr, part+1, right, is_less_than)
+        total_iterations += iter1
+        total_iterations += iter2
 
     return arr, total_iterations
 
 
 
-'''
 if __name__ == "__main__":
 
-    #print(quick_sort(unsorted, 0, 4))
-'''
+    items = [3,1,5,9,2,4,7,6,8]
 
+    def is_less_than(item1, item2):
+        if item1 < item2:
+            return True
+        return False
 
+    arr, iterations = quick_sort(items, 0,8, is_less_than)
+    print(arr)
+    print(iterations)

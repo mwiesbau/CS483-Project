@@ -1,5 +1,5 @@
 
-def generate_grey_code(fields=4, start=1, end=3):
+def generate_grey_code(fields=4, start=0, end=3):
     '''
 
     :param fields: length of the record
