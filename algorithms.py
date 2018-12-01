@@ -1,6 +1,6 @@
 from generator import generate_grey_code
 import random
-from quicksort import quick_sort
+from quicksort import QuickSort
 
 def radix_sort(records):
     number_of_iterations = 0
@@ -10,6 +10,8 @@ def radix_sort(records):
     for i in range(len(records[0])-1, -1, -1):
         ordered_array = []  # TEMPORARY ARRAY LOCATION
         sorted_dict = {}  # LIST TO STORE SORTED RESULTS
+
+        number_of_iterations += 1
 
         # ITERATE OVER ALL RECORDS (ROWS)
         for record in records:
@@ -24,6 +26,7 @@ def radix_sort(records):
         # CONVERT THE LINKED LIST TO ARRAY
         ordered_keys = sorted(sorted_dict.keys())
         for key in ordered_keys:
+            number_of_iterations += 1
             # CHECK IF LIST IS EVEN OR ODD TO ORDER IN GRAY ORDER AND NOT LEXICOGRAPHIC
             #if even_odd_counter % 2 == 0:
             if key % 2 == 0:
@@ -101,9 +104,10 @@ def test_grayorder():
 
 
 def gray_order_sort(records):
-
-    records, number_of_iterations = quick_sort(records, 0, len(records) - 1, grayorder)
-    return records, number_of_iterations
+    qs = QuickSort(comparator_function='a')
+    records = qs.quick_sort(records, 0, len(records) - 1)
+    iterations = qs.total_iterations
+    return records, iterations
 
 
 def test_gray_order_sort():
@@ -114,8 +118,8 @@ def test_gray_order_sort():
     randomized_grey_code = grey_code.copy()
     random.shuffle(randomized_grey_code)
 
-
-    sorted, iterations = quick_sort(randomized_grey_code, 0, len(randomized_grey_code)-1, grayorder)
+    qs = QuickSort()
+    sorted = qs.quick_sort(randomized_grey_code, 0, len(randomized_grey_code)-1, grayorder)
     is_different = False
 
     for grey, sort in zip(grey_code, sorted):
@@ -138,16 +142,15 @@ def gray_rank(record, N):
     '''
 
     i = record[0]
-
+    counter = 0
     for j in range(1, len(record)):
+        counter += 1
         if i % 2 == 0:
             i_2 = record[j]
         else:
             i_2 = N - 1 - record[j]
-
         i = i * N + i_2
-
-    return i
+    return i, counter
 
 
 def test_gray_rank():
@@ -171,19 +174,17 @@ def test_gray_rank():
 
 def rank_sort(records, N):
     # COMPUTE AND APPEND THE RANK
+    counter = 0
     for record in records:
-        rank = gray_rank(record, N)
+        counter += 1
+        rank, operations = gray_rank(record, N)
+        counter += operations
         record.append(rank)
 
-    # COMPARATOR FUNCTION FOR QUICKSORT
-    def is_less_than(record1, record2):
-        if record1[-1] < record2[-1]:   # COMPARE RANKS
-            return True
-        else:
-            return False
-
     # QUICKSORT ON THE RECORDS
-    records, iterations = quick_sort(records, 0, len(records)-1, is_less_than)
+    qs = QuickSort(comparator_function='b')
+    records = qs.quick_sort(records, 0, len(records)-1)
+    iterations = qs.total_iterations + counter
     return records, iterations
 
 
@@ -233,6 +234,7 @@ def run_all_tests():
     print("Gray Order Rank Sorting is working as expected: {}".format(not test_rank_sort()))
     print("-" * 40)
     '''
+
 if __name__ == "__main__":
     
     run_all_tests()

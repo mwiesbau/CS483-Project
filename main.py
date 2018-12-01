@@ -2,19 +2,26 @@ import numpy as np
 import random
 import copy
 from algorithms import radix_sort, gray_order_sort, rank_sort
+import json
 
 class FileOfRecords():
 
     def __init__(self, num_records, num_fields):
+        self.radix_vector = []
+
+        # GENERATE RANDOM RADIX VALUES FOR COLUMNS
+        for k in range(0, num_fields):
+            Ni = random.randint(2, 10)
+            self.radix_vector.append(Ni)
+
         self.num_fields = num_fields
 
         # GENERATE RECORD DATA
         self.records = []
         for j in range(0, num_records):
-                Ni = random.randint(2,10)
                 self.records.append([])
                 for k in range(0, num_fields):
-                    self.records[j].append(random.randint(1, Ni))
+                    self.records[j].append(random.randint(0, self.radix_vector[k] - 1))
 
         # CALCULATE INITIAL SCORES
         self.initial_score = self.get_score()
@@ -135,58 +142,46 @@ class Files():
 
 
 
-if __name__ == "__main__":
-    number_of_files = 1
 
-    #INITIALIZE THE ALL FILES
-    all_files = Files(num_files=number_of_files)
+def run_algorithm_x(files, param='a', debug=False):
+    '''
+    :param files:
+    :param param: The algorithm parameter (a, b, c)
+    :return:
+    '''
 
-    # LIST OF ALGORITHMS TO RUN
-    params = ['a', 'b', 'c']
+    stats = {'total_operations': 0,
+             'before_score_binary': 0,
+             'before_score_full': 0,
+             'after_score_binary': 0,
+             'after_score_full': 0}
 
+    # ITERATE OVER THE FILES
+    for file_of_records in files.files:
 
-    for param in params:
-        print("\n")
-        print("="*70)
-        print("Algorithm - {}".format(param.upper()))
-        counter = 1
-        total_counter = 0
-        before_binary = 0
-        before_full = 0
-        after_binary = 0
-        after_full = 0
-        total_operations = 0
+        # STORE SCORES BEFORE THE ALGORITHM IS RUN
+        before_score = file_of_records.get_score()
+        stats['before_score_binary'] += before_score["binary_score"]
+        stats['before_score_full'] += before_score["full_score"]
 
-        # MAKE COPY THE INSTANCE TO ENSURE THE SAME DATA IS BEING COMPARED
-        files = copy.deepcopy(all_files)
-        print("\tRunning {:02d}/10 samples with {} file/s each.".format(counter, number_of_files))
+        # DECIDE WHICH ALGORITHM TO RUN
+        if param == 'a':
+            operations = file_of_records.algorithm_a()
+            stats['total_operations'] += operations
+        if param == 'b':
+            operations = file_of_records.algorithm_b()
+            stats['total_operations'] += operations
+        if param == 'c':
+            operations = file_of_records.algorithm_c()
+            stats['total_operations'] += operations
 
-        # ITERATE OVER THE 10 FILES
-        for file_of_records in files.files:
-            total_counter += 1
+        # STORE SCORES AFTER THE ALGORITHM IS RUN
+        after_score = file_of_records.get_score()
+        stats['after_score_binary'] += after_score["binary_score"]
+        stats['after_score_full'] += after_score["full_score"]
 
-            # STORE SCORES BEFORE THE ALGORITHM IS RUN
-            before_score = file_of_records.get_score()
-            before_binary += before_score["binary_score"]
-            before_full += before_score["full_score"]
-
-            # DECIDE WHICH ALGORITHM TO RUN
-            if param == 'a':
-                operations = file_of_records.algorithm_a()
-                total_operations += operations
-            if param == 'b':
-                operations = file_of_records.algorithm_b()
-                total_operations += operations
-            if param == 'c':
-                operations = file_of_records.algorithm_c()
-                total_operations += operations
-
-            # STORE SCORES AFTER THE ALGORITHM IS RUN
-            after_score = file_of_records.get_score()
-            after_binary += after_score["binary_score"]
-            after_full += after_score["full_score"]
-
-            # DEBUG SECTION SHOWGIN FIRST AND LAST ENTRIES IN SORTED ORDER
+        # DEBUG SECTION SHOWGIN FIRST AND LAST ENTRIES IN SORTED ORDER
+        if debug:
             print("-" * 70)
             print("\tFIRST 5 RECORDS IN FILE")
             print("-" * 70)
@@ -196,12 +191,42 @@ if __name__ == "__main__":
             print("-" * 70)
             file_of_records.print_last_x_records(5)
 
-        # PRINT STATS
-        print("-"*70)
-        print("Before Averages total: {} iterations: Binary: {:.1f}, Full: {:.1f}".format(total_counter, before_binary/total_counter, before_full/total_counter))
-        print("After Averages total:  {} iterations: Binary: {:.1f}, Full: {:.1f}".format(total_counter, after_binary /total_counter, after_full /total_counter))
-        print("Average Operations: {}".format(total_operations/total_counter))
+    # COMPUTE AVERAGE
+    stats['total_operations'] = int(stats['total_operations'] / len(files.files))
+    stats['before_score_binary'] = int(stats['before_score_binary'] / len(files.files))
+    stats['after_score_binary'] = int(stats['after_score_binary'] / len(files.files))
+    stats['before_score_full'] = int(stats['before_score_full'] / len(files.files))
+    stats['after_score_full'] = int(stats['after_score_full'] / len(files.files))
+    return stats
+
+if __name__ == "__main__":
+
+    # PARAMETTERS TO CONTROL FILES
+    number_of_files = 10
+
+    #INITIALIZE THE ALL FILES
+    all_files = Files(num_files=number_of_files)
+
+    # LIST OF ALGORITHMS TO RUN
+    # a is simple quicksort
+    # b is quicksort and computing rank prior
+    # c is radix sort
+    params = ['a', 'b', 'c']
+
+    for param in params:
+        print("\n")
         print("="*70)
+        print("Algorithm - {}".format(param.upper()))
+
+        # MAKE COPY THE INSTANCE TO ENSURE THE SAME DATA IS BEING COMPARED
+        files = copy.deepcopy(all_files)
+        print("\tRunning sample with {} file/s.".format(number_of_files))
+        stats = run_algorithm_x(files, param=param)
+
+        print("\n".join("\t{}\t{}".format(k, v) for k, v in stats.items()))
+        print("=" * 70)
+
+
 
 
 
